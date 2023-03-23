@@ -4,7 +4,7 @@ concurrency: tell_story
 on:
   workflow_dispatch:
   schedule:
-     - cron: '0 */9 * * *'
+     - cron: '0 */2 * * *'
      
 jobs:
   run:
