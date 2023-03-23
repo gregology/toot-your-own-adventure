@@ -1,0 +1,21 @@
+name: tell_story
+concurrency: tell_story
+
+on:
+  workflow_dispatch:
+  schedule:
+     - cron: '0 */9 * * *'
+     
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    environment: tootyourownadventure
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+         python-version: '3.11' 
+         cache: 'pip'
+      - run: pip install -r requirements.txt
+      - run: python app.py --mastodon_server ${{ vars.MASTODON_SERVER }} --mastodon_access_token ${{ secrets.MASTODON_ACCESS_TOKEN }} --openai_api_key ${{ secrets.OPENAI_API_KEY }} --openai_organization ${{ secrets.OPENAI_ORG }} ${{ vars.OTHER_FLAGS }}
+  

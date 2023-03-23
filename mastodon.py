@@ -79,3 +79,12 @@ class Mastodon:
         }
         response = requests.post(f"{self.mastodon_api_url}/statuses", data=json.dumps(status_data), headers=self.headers)
         return json.loads(response.content)
+
+
+    def post_status(self, status, previous_poll_id=None):
+        status_data = {
+            'status': status,
+            'in_reply_to_id': previous_poll_id
+        }
+        response = requests.post(f"{self.mastodon_api_url}/statuses", data=json.dumps(status_data), headers=self.headers)
+        return json.loads(response.content)

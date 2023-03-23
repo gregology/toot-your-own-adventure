@@ -11,6 +11,7 @@ class Story:
 
         self.messages = [
             {"role": "system", "content": "You are an author who focuses on character development"},
+            {"role": "user", "content": f"Write the first paragraph of a {self.genre} story"}
         ]
 
     def __str__(self):
@@ -33,13 +34,14 @@ class Story:
 
 
     def start(self):
-        self.messages.append({"role": "user", "content": f"Write the first paragraph of a {self.genre} story"})
         response = self.ask_bot(messages=self.messages)
         self.messages.append({"role": "assistant", "content": response})
 
 
     def append_previous_paragraphs(self, paragraphs:list):
-        self.messages += [{"role": "assistant", "content": paragraph} for paragraph in paragraphs]
+        for paragraph in paragraphs:
+            self.messages.append({"role": "assistant", "content": paragraph})
+            self.messages.append({"role": "user", "content": f"write the next paragraph of this {self.genre} story"})
 
 
     def paragraphs(self):
@@ -51,21 +53,21 @@ class Story:
 
 
     def get_cues(self):
-        continue_story_message = self.messages + [{"role": "user", "content": "write the next sentence of this {self.genre} story"}]
+        continue_story_message = self.messages + [{"role": "user", "content": f"write the next sentence of this {self.genre} story"}]
         sentences = self.ask_bot(messages=continue_story_message, n=self.number_of_cues)
         return [{"sentence": sentence, "summary": self.summarize(text=sentence, character_limit=self.poll_character_limit)} for sentence in sentences]
 
 
-    def generate_status(self, cues:list):
-        status = f"{self.paragraphs()[-1]}\n\nWhat should happen next?\n\n"
-        for i, cue in enumerate(cues):
-            status += f"{i + 1}: {cue['sentence']}\n"
+    def generate_status(self, cues:list=None):
+        status = f"{self.paragraphs()[-1]}"
+        if cues:
+            status += "\n\nWhat should happen next?\n\n"
+            for i, cue in enumerate(cues):
+                status += f"{i + 1}: {cue['sentence']}\n"
         return status
 
 
-    def prompt_to_continue(self):
-        # This is for testing locally
-        
+    def prompt(self):
         cues = self.get_cues()
 
         print("\nWhat should happen next?")
@@ -93,6 +95,12 @@ class Story:
 
     def continue_with_cue(self, cue:str):
         continue_story_message = [{"role": "user", "content": f"start the next paragraph of this {self.genre} story with this cue: \"{cue}\""}]
+        response = self.ask_bot(messages=self.messages + continue_story_message)
+        self.messages.append({"role": "assistant", "content": response})
+
+
+    def wrap_up_with_cue(self, cue:str):
+        continue_story_message = [{"role": "user", "content": f"wrap up this {self.genre} story in 7 paragraphs using this cue: \"{cue}\""}]
         response = self.ask_bot(messages=self.messages + continue_story_message)
         self.messages.append({"role": "assistant", "content": response})
 
