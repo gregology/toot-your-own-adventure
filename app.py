@@ -13,8 +13,8 @@ parser.add_argument('--poll_character_limit', type=int, help='character limit fo
 parser.add_argument('--poll_run_time', type=int, help='How long the poll will run in hours (defaults to 8)', default=8)
 parser.add_argument('--number_of_cues', type=int, help='number of cues for the poll (defaults to 3)', default=3)
 parser.add_argument('-p', '--prompt', action='store_true', help='using text prompt to test your story, does not post to Mastodon')
-parser.add_argument('-n', '--new', action='store_true', help='start a new story') # to be implemented
-parser.add_argument('-e', '--end', action='store_true', help='end the story') # to be implemented
+parser.add_argument('-n', '--new', action='store_true', help='start a new story')
+parser.add_argument('-e', '--end', action='store_true', help='end the story')
 parser.add_argument('-t', '--tag', action='append', type=str, help='hashtag to use in posts, you can add multiple tag flags') # to be implemented
 args = parser.parse_args()
 
@@ -52,6 +52,10 @@ if args.new or not mastodon.last_poll:
 
 
 if args.end:
+    if mastodon.last_status['poll'] == None:
+        print("Story has already ended")
+        exit()
+
     print("Ending story")
     
     previous_paragraphs = mastodon.get_paragraphs_from_previous_polls()

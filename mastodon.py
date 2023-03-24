@@ -9,6 +9,8 @@ class Mastodon:
         self.access_token = access_token
         self.headers = {'Authorization': f'Bearer {access_token}', 'Content-Type': 'application/json'}
         self.account_id = self.get_account_id()
+        self.previous_statuses = self.get_previous_statuses()
+        self.last_status = self.previous_statuses[0] if len(self.previous_statuses) > 0 else None
         self.previous_polls = self.get_previous_polls()
         self.last_poll = self.previous_polls[0] if len(self.previous_polls) > 0 else None
 
@@ -16,13 +18,16 @@ class Mastodon:
     def get_account_id(self):
         response = requests.get(f"{self.mastodon_api_url}/accounts/verify_credentials", headers=self.headers)
         return json.loads(response.content)["id"]
+    
+
+    def get_previous_statuses(self):
+        params = {'access_token': self.access_token, 'limit': 50}
+        response = requests.get(f"{self.mastodon_api_url}/accounts/{self.account_id}/statuses", params=params)
+        return json.loads(response.content)
 
 
     def get_previous_polls(self):
-        params = {'access_token': self.access_token, 'limit': 50}
-        response = requests.get(f"{self.mastodon_api_url}/accounts/{self.account_id}/statuses", params=params)
-        statuses = json.loads(response.content)
-        return [status for status in statuses if status["poll"]]
+        return [status for status in self.previous_statuses if status["poll"]]
 
 
     def is_last_poll_expired(self):
