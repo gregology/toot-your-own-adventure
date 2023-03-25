@@ -38,7 +38,7 @@ class Mastodon:
         return [status for status in self.previous_statuses if status["poll"]]
 
 
-    def is_last_poll_expired(self):
+    def last_poll_expired(self):
         return self.previous_polls[0]["poll"]["expired"] if len(self.previous_polls) > 0 else None
 
     

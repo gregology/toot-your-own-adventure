@@ -113,13 +113,13 @@ else:
     if args.new or mastodon.last_status_is_not_poll():
         new_story()
 
-    elif args.end and mastodon.last_status_is_poll():
+    elif args.end and mastodon.last_status_is_poll() and mastodon.last_poll_expired():
         end_story()
 
     elif args.end and mastodon.last_status_is_not_poll():
         print("Story has already ended")
 
-    elif mastodon.is_last_poll_expired():
+    elif mastodon.last_poll_expired():
         continue_story()
     else:
         print("Last poll is still running, waiting for it to expire")
