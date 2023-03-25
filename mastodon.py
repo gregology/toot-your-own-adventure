@@ -15,6 +15,14 @@ class Mastodon:
         self.last_poll = self.previous_polls[0] if len(self.previous_polls) > 0 else None
 
 
+    def last_status_is_not_poll(self):
+        return self.last_status is not None and self.last_status.get('poll') is None
+    
+
+    def last_status_is_poll(self):
+        return self.last_status is not None and self.last_status.get('poll') is not None
+        
+
     def get_account_id(self):
         response = requests.get(f"{self.mastodon_api_url}/accounts/verify_credentials", headers=self.headers)
         return json.loads(response.content)["id"]
