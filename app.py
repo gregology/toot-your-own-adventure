@@ -16,6 +16,7 @@ parser.add_argument('--number_of_cues', type=int, help='number of cues for the p
 parser.add_argument('-p', '--prompt', action='store_true', help='using text prompt to test your story, does not post to Mastodon')
 parser.add_argument('-n', '--new', action='store_true', help='start a new story')
 parser.add_argument('-e', '--end', action='store_true', help='end the story')
+parser.add_argument('-f', '--force_end', action='store_true', help='forces end the story even if poll is still running')
 parser.add_argument('-t', '--tag', action='append', type=str, help='hashtag to use in posts, you can add multiple tag flags') # to be implemented
 args = parser.parse_args()
 
@@ -114,6 +115,9 @@ else:
         new_story()
 
     elif args.end and mastodon.last_status_is_poll() and mastodon.last_poll_expired():
+        end_story()
+
+    elif args.force_end and mastodon.last_status_is_poll():
         end_story()
 
     elif args.end and mastodon.last_status_is_not_poll():
