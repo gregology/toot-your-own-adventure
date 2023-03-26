@@ -32,6 +32,7 @@ class Story:
             {"role": "system", "content": "You are a concise author"},
             {"role": "user", "content": f"Summarize this sentence in {character_limit} characters or less \"{text}\""} 
         ]
+        
         response = self.ask_bot(messages=messages)
         output = re.sub(r'\s*\(\s*\d+?(\s*\w*)*\)', '', response)
 

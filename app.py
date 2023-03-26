@@ -45,8 +45,10 @@ def prompt():
 def new_story():
     print(f"Starting new {args.genre}")
     story.start()
-    status = story.generate_status(story.get_cues())
-    response = mastodon.post_poll(status=status, options=[cue["summary"] for cue in story.get_cues()], expires_in=args.poll_run_time*60*60)
+    cues = story.get_cues()
+    status = story.generate_status(cues)
+    options = [cue["summary"] for cue in cues]
+    response = mastodon.post_poll(status=status, options=options, expires_in=args.poll_run_time*60*60)
     print(response)
 
 
