@@ -117,7 +117,7 @@ class Story:
         self.messages.append({"role": "assistant", "content": response})
 
 
-    def ask_bot(self, messages:list, model:str="gpt-3.5-turbo", n:int=1, temperature:int=1):
+    def ask_bot(self, messages:list, model:str="gpt-4", n:int=1, temperature:int=1):
         openai.organization = self.organization
         openai.api_key = self.api_key
 
@@ -126,6 +126,7 @@ class Story:
             messages=messages,
             n=n,
             temperature=temperature,
+            max_tokens=4096,
         )
 
         if n > 1:
